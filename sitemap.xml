@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- sitemap.xml — Ken Mark S. Labog Portfolio
+     TODO: Replace YOUR-PORTFOLIO-URL with the real public base URL after deployment.
+     Example (GitHub Pages): https://kenmarklabog.github.io/portfolio-website
+     Example (custom domain): https://example.com
+     resume.html is intentionally excluded (it is noindex). -->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>YOUR-PORTFOLIO-URL/</loc>
+  </url>
+</urlset>

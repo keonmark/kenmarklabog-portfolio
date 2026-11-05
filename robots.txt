@@ -1,0 +1,13 @@
+# robots.txt — Ken Mark S. Labog Portfolio
+#
+# TODO: Replace YOUR-PORTFOLIO-URL with the real public URL after deployment.
+# Example (GitHub Pages): https://kenmarklabog.github.io/portfolio-website/
+# Example (custom domain): https://example.com/
+#
+# Until then this file is a template and is NOT live.
+
+User-agent: *
+Allow: /
+Disallow: /resume.html
+
+Sitemap: YOUR-PORTFOLIO-URL/sitemap.xml

@@ -1,4 +1,4 @@
-# OS
+# Operating system
 .DS_Store
 Thumbs.db
 desktop.ini
@@ -9,10 +9,22 @@ desktop.ini
 *.swp
 *.swo
 
-# Logs
+# Logs and temporary files
 *.log
 npm-debug.log*
-
-# Local / temporary
 *.tmp
+
+# Dependencies and Python environments
+node_modules/
+venv/
+.venv/
+__pycache__/
+*.py[cod]
+
+# Environment variables and secrets
 .env
+.env.*
+!.env.example
+
+# Original, unprocessed certificates
+/assets/images/certificates/*.jpg

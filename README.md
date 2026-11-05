@@ -1,117 +1,89 @@
 # Ken Mark S. Labog — Personal Portfolio
 
-Professional portfolio website for **Ken Mark S. Labog**, 4th Year BSIT student at Isabela State University – Cauayan Campus.
+A personal portfolio website showcasing my background, education, technical skills, certifications, and projects as a Bachelor of Science in Information Technology student specializing in Networking and Security.
 
-Built with plain **HTML5, CSS3, and vanilla JavaScript**. No frameworks, no build step, no external runtime dependencies.
+**Domain:** https://kenmarklabog.online
 
----
+**Deployment Status:** In progress
 
-## Project Status
+## Built With
 
-Implementation is proceeding in approved steps:
+- HTML5
+- CSS3
+- JavaScript
+- Bootstrap (where applicable)
 
-1. [x] Step 1 — Project scaffold, `.gitignore`, README, git init
-2. [ ] Step 2 — Design system: `assets/css/styles.css` tokens, reset, typography, layout
-3. [ ] Step 3 — Full `index.html` with all required sections
-4. [ ] Step 4 — Section styling + responsive pass
-5. [ ] Step 5 — `assets/js/main.js` (nav, reveals, form, back-to-top)
-6. [ ] Step 6 — Assets: favicon, placeholder images, QR code, resume
-7. [ ] Step 7 — SEO: meta/OG/JSON-LD, `robots.txt`, `sitemap.xml`
-8. [ ] Step 8 — Accessibility + performance audit
-9. [ ] Step 9 — Content audit against the brief
-10. [ ] Step 10 — Final commit; deployment deferred until domain/hosting confirmed
+This website uses a lightweight static architecture without a frontend framework or build process.
 
----
+## Featured Projects
 
-## Structure
+### LAN-Based Campus Cashier Collection and Audit-Ready Reporting System
 
-```
+A LAN-based cashier collection and reporting system developed for Isabela State University – Cauayan Campus.
+
+- **Role:** Full-System Development
+- **Status:** Deployed on campus LAN
+- **Technologies:** Python, Django, MariaDB, HTML, CSS, JavaScript, Bootstrap, Waitress, and Caddy
+
+### ADLOR — Attendance Data Logger for Organized Records
+
+A QR-based attendance management system designed to support campus event attendance recording and tracking.
+
+- **Role:** Full-System Development
+- **Status:** Previous deployment no longer live
+- **Technologies:** PHP, MySQL, HTML, CSS, and JavaScript
+
+## Project Structure
+
+```text
 portfolio-website/
-├── index.html                 # Main single-page site (Step 3)
-├── resume.html                # Printable resume page (Step 6)
-├── robots.txt                 # Step 7
-├── sitemap.xml                # Step 7
+├── index.html
+├── resume.html
+├── robots.txt
+├── sitemap.xml
 ├── README.md
 ├── .gitignore
+├── tools/
 └── assets/
-    ├── css/styles.css         # Design tokens + all styles (Step 2/4)
-    ├── js/main.js             # All JavaScript (Step 5)
-    ├── docs/                  # ken-mark-labog-resume.pdf goes here
+    ├── css/
+    ├── js/
     └── images/
-        ├── profile/           # Profile photo
-        ├── projects/
-        │   ├── campus-cashier/  # Project screenshots
-        │   └── adlor/           # Project screenshots
-        ├── qr-portfolio.png   # Static portfolio QR code (Step 6)
-        ├── favicon.svg
-        └── og-cover.png       # Open Graph share image
+        ├── profile/
+        ├── certificates/
+        │   └── blurred/
+        └── projects/
+            ├── campus-cashier/
+            └── adlor/
 ```
 
----
+## Local Development
 
-## TODO Registry — Information Still Needed
+No installation or build process is required.
 
-> Rules: never invent personal details, dates, employers, certificate numbers, or verification URLs. Fill items below only when verified.
+1. Clone the repository.
+2. Open the project folder.
+3. Open `index.html` in a browser.
 
-### Content
-
-- [ ] Profile photograph (`assets/images/profile/`)
-- [ ] GitHub profile URL (username not yet chosen)
-- [ ] LinkedIn URL (none currently — omit link until it exists)
-- [ ] Phone number (optional; do not hard-code until provided)
-- [ ] Personal domain (not yet purchased; confirm instructor requirement first)
-- [ ] Hosting provider selection
-
-### Certifications / Training
-
-- [ ] GICAST — exact title and issuing organization
-- [ ] Networking-related exam/certification — exact title
-- [ ] Dates / credential IDs / verification URLs for all certifications (if provided later)
-
-### Experience — SPES
-
-- [ ] Organization name
-- [ ] Position/role
-- [ ] Start and end dates
-- [ ] Responsibilities and accomplishments
-
-### Education
-
-- [ ] Luna National High School graduation year
-- [ ] Luna Central School graduation year
-
-### Projects
-
-- [ ] Campus Cashier system — verified final technology stack and feature list
-- [ ] Campus Cashier screenshots (`assets/images/projects/campus-cashier/`)
-- [ ] ADLOR — confirm whether backup is the final version
-- [ ] ADLOR screenshots (`assets/images/projects/adlor/`)
-
-### Assets
-
-- [ ] `assets/docs/ken-mark-labog-resume.pdf` (printable `resume.html` works until then)
-- [ ] Open Graph cover image
-- [ ] Favicon finalization
-
----
-
-## Updating Content Later
-
-Instructions will be added after implementation (how to add a certification, add a project, swap the resume, update links).
-
----
-
-## Local Preview
-
-No build required. Open `index.html` directly in a browser, or serve the folder:
+Alternatively, run a local development server:
 
 ```powershell
 python -m http.server 8000
-# then visit http://localhost:8000
 ```
+
+Then visit `http://localhost:8000`.
+
+## Deployment
+
+The portfolio is being prepared for deployment using [Vercel](https://vercel.com/).
+
+The custom domain is registered through Hostinger:
+
+**https://kenmarklabog.online**
+
+## Contact
+
+Please visit the portfolio website for available contact and social links.
 
 ---
 
-## License
-
-Personal portfolio. All content © Ken Mark S. Labog.
+© Ken Mark S. Labog. All rights reserved.
