@@ -76,7 +76,7 @@ body {
   background-color: var(--paper);
   color: var(--body);
   font-family: var(--font-sans);
-  font-size: 17px;
+  font-size: 16px;
   line-height: 1.6;
   -webkit-font-smoothing: antialiased;
   overflow-wrap: break-word;
@@ -459,14 +459,6 @@ h4 {
   text-overflow: ellipsis;
 }
 
-.nav-brand-role {
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  letter-spacing: 0.22em;
-  text-transform: uppercase;
-  color: var(--muted);
-}
-
 .nav-menu {
   display: flex;
   align-items: center;
@@ -483,11 +475,11 @@ h4 {
   display: inline-flex;
   align-items: baseline;
   gap: 0.4rem;
-  padding: 0.45rem 0.5rem;
+  padding: 0.42rem 0.46rem;
   font-family: var(--font-mono);
-  font-size: 0.68rem;
+  font-size: 0.66rem;
   font-weight: 700;
-  letter-spacing: 0.1em;
+  letter-spacing: 0.09em;
   text-transform: uppercase;
   text-decoration: none;
   color: var(--ink);
@@ -562,6 +554,12 @@ h4 {
    -------------------------------------------------------------------------- */
 .hero {
   position: relative;
+  display: flex;
+  flex-direction: column;
+  /* Fill the first screen below the sticky masthead so the cover block can
+     center itself between the header and the ticker. */
+  min-height: calc(100vh - var(--header-h));
+  min-height: calc(100svh - var(--header-h));
   padding-top: clamp(1.4rem, 3vw, 2.1rem);
   overflow: hidden;
   border-bottom: 2px solid var(--ink);
@@ -570,6 +568,12 @@ h4 {
 .hero-inner {
   position: relative;
   z-index: 1;
+  flex: 1 0 auto;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  /* Slight downward bias so the cover sits just below true center. */
+  padding-top: clamp(0.6rem, 2.2vh, 1.6rem);
 }
 
 .hero-decor {
@@ -613,37 +617,25 @@ h4 {
   opacity: 0.9;
 }
 
-.hero-kicker {
-  display: flex;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 0.7rem;
-}
-
-.hero-kicker-tag {
-  padding: 0.4em 0.75em;
+/* Intro label above the name — deliberately quiet so the name stays dominant */
+.hero-eyebrow {
+  display: block;
+  margin-bottom: 0.6rem;
   font-family: var(--font-mono);
-  font-size: 0.72rem;
+  font-size: clamp(0.68rem, 0.9vw, 0.78rem);
   font-weight: 700;
-  letter-spacing: 0.22em;
+  line-height: 1.2;
+  letter-spacing: 0.32em;
   text-transform: uppercase;
-  color: var(--ink);
-  border: 1.5px solid var(--ink);
-  border-radius: var(--radius);
-}
-
-.hero-kicker-sep {
-  color: var(--red);
-  font-size: 1.15rem;
-  line-height: 1;
+  color: var(--muted);
 }
 
 .hero-title {
   position: relative;
   margin-top: 0.55rem;
-  margin-bottom: clamp(1.15rem, 2.4vw, 1.4rem);
+  margin-bottom: clamp(0.6rem, 1.2vw, 0.8rem);
   font-family: var(--font-display);
-  font-size: clamp(2.9rem, 8.4vw, 7.75rem);
+  font-size: clamp(2.9rem, 7.35vw, 6.3rem);
   line-height: 0.92;
   letter-spacing: -0.035em;
   text-transform: uppercase;
@@ -660,13 +652,13 @@ h4 {
 
 .hero-grid {
   display: grid;
-  grid-template-columns: minmax(0, 1.05fr) minmax(0, 0.95fr);
+  grid-template-columns: minmax(0, 2fr) minmax(0, 1fr);
   column-gap: clamp(2rem, 5vw, 4rem);
   align-items: start;
 }
 
 .hero-title {
-  grid-column: 1 / -1;
+  grid-column: 1;
   grid-row: 1;
 }
 
@@ -675,23 +667,31 @@ h4 {
   grid-row: 2;
 }
 
+/* Professional title beneath the name */
 .hero-role {
-  font-family: var(--font-serif);
-  font-style: italic;
-  font-size: clamp(1.1rem, 1.7vw, 1.3rem);
-  line-height: 1.55;
+  font-family: var(--font-mono);
+  font-size: clamp(0.8rem, 1.05vw, 0.95rem);
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
   color: var(--ink);
-  max-width: 34ch;
 }
 
-.hero-descriptor {
-  margin-top: 1rem;
-  font-family: var(--font-mono);
-  font-size: 0.78rem;
-  font-weight: 700;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  color: var(--blue);
+/* Brief introduction */
+.hero-intro {
+  max-width: 58ch;
+  margin-top: 0.65rem;
+  font-size: clamp(0.98rem, 1.1vw, 1.08rem);
+  line-height: 1.6;
+  color: var(--body);
+}
+
+/* Desktop only: tuck the content block up beneath the H1 — the portrait
+   stretches grid row 1, which otherwise leaves a large void under the name. */
+@media (min-width: 901px) {
+  .hero-content {
+    margin-top: clamp(-140px, -12vw, -110px);
+  }
 }
 
 .hero-actions {
@@ -733,18 +733,11 @@ a.icon-link:hover {
   text-underline-offset: 3px;
 }
 
-.icon-link--pending {
-  color: var(--muted);
-}
-
-.icon-link--pending svg {
-  color: var(--muted);
-}
-
 /* Portrait: taped print */
 .hero-media {
   grid-column: 2;
-  grid-row: 2;
+  grid-row: 1;
+  margin-top: 0.55rem;
   display: flex;
   flex-direction: column;
   gap: 1.35rem;
@@ -770,8 +763,8 @@ a.icon-link:hover {
 .profile-photo {
   width: 100%;
   height: auto;
-  aspect-ratio: 1;
-  object-fit: cover;
+  aspect-ratio: auto;
+  object-fit: contain;
   background: #eee;
 }
 
@@ -822,7 +815,7 @@ a.icon-link:hover {
 
 .hero-spec {
   grid-column: 2;
-  grid-row: 3;
+  grid-row: 2;
   margin-top: 0.6rem;
 }
 
@@ -955,7 +948,7 @@ a.icon-link:hover {
 .section-title {
   margin-top: 1.1rem;
   font-family: var(--font-display);
-  font-size: clamp(2.3rem, 6vw, 4.2rem);
+  font-size: clamp(2.15rem, 5.4vw, 3.85rem);
   line-height: 0.95;
   letter-spacing: -0.02em;
   text-transform: uppercase;
@@ -970,10 +963,15 @@ a.icon-link:hover {
   color: var(--blue);
 }
 
+/* Skills heading kept proportionate to its two subsections */
+#skills .section-title {
+  font-size: clamp(1.8rem, 3.8vw, 2.7rem);
+}
+
 .section-desc {
   max-width: 58ch;
   margin-top: 1.2rem;
-  font-size: 1.05rem;
+  font-size: 1rem;
 }
 
 .section-note {
@@ -995,7 +993,7 @@ a.icon-link:hover {
   padding: 2.3rem 2rem 2.1rem 3.2rem;
   font-family: var(--font-serif);
   font-style: italic;
-  font-size: clamp(1.2rem, 2.4vw, 1.65rem);
+  font-size: clamp(1.1rem, 2.1vw, 1.45rem);
   line-height: 1.55;
   color: var(--ink);
   background: var(--card);
@@ -1059,7 +1057,7 @@ a.icon-link:hover {
 
 .skill-groups {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
   gap: 1.5rem;
   counter-reset: skill-group;
 }
@@ -1641,10 +1639,6 @@ a.contact-link:hover {
   border-color: var(--yellow);
 }
 
-.contact-link--pending {
-  color: var(--on-ink-muted);
-}
-
 .qr-block {
   margin-top: 2.4rem;
 }
@@ -1741,12 +1735,16 @@ a.contact-link:hover {
 
 /* 12. CERTIFICATES, MODAL, FOOTER, FLOATING UTILITIES
    -------------------------------------------------------------------------- */
-.certificate-gallery {
+#credentials .container {
+  /* Frame numbers run continuously: featured 01–02, gallery 03–16 */
   counter-reset: cert;
+}
+
+.certificate-gallery {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 2.6rem 1.5rem;
-  margin-top: 1.7rem;
+  margin-top: 3rem;
 }
 
 .certificate-card {
@@ -1819,6 +1817,174 @@ a.contact-link:hover {
   color: var(--muted);
 }
 
+/* Issuing organization line (featured cards + gallery cards) */
+.certificate-org {
+  margin-top: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.06em;
+  line-height: 1.45;
+  color: var(--blue);
+}
+
+/* Validity range on featured credentials, marked with a press tick */
+.certificate-details time.certificate-valid {
+  margin-top: 0.4rem;
+  padding-left: 0.45rem;
+  color: var(--ink);
+  border-left: 2px solid var(--red);
+}
+
+/* Credential verification controls — deliberately small and secondary */
+.certificate-verify {
+  margin-top: 0.6rem;
+  padding-top: 0.55rem;
+  border-top: 1px dotted var(--line-soft);
+}
+
+.certificate-verify__note {
+  margin-top: 0.45rem;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  line-height: 1.5;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+
+.certificate-verify__code {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.4rem;
+}
+
+.certificate-verify__code code {
+  padding: 0.28em 0.5em;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  color: var(--ink);
+  background: var(--card);
+  border: 1.5px solid var(--ink);
+  box-shadow: 2px 2px 0 rgba(23, 20, 15, 0.16);
+}
+
+.certificate-copy {
+  padding: 0.3em 0.65em;
+  font-family: var(--font-mono);
+  font-size: 0.62rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--paper);
+  background: var(--ink);
+  border: 1.5px solid var(--ink);
+  box-shadow: 2px 2px 0 var(--red);
+  cursor: pointer;
+  transition:
+    transform var(--t-base) var(--ease),
+    box-shadow var(--t-base) var(--ease),
+    background-color var(--t-base) var(--ease);
+}
+
+.certificate-copy:hover {
+  transform: translate(-1px, -1px);
+  box-shadow: 3px 3px 0 var(--red);
+}
+
+.certificate-copy.is-copied {
+  background: var(--blue);
+  border-color: var(--blue);
+  box-shadow: 2px 2px 0 var(--ink);
+}
+
+/* Verification block rendered inside the certificate modal */
+.certificate-modal__verify {
+  flex-basis: 100%; /* figcaption is a flex row — force the block onto its own line */
+  margin-top: 0.85rem;
+  padding-top: 0.75rem;
+}
+
+.certificate-verify__title {
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  margin-bottom: 0.55rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.certificate-verify__title::before {
+  content: "";
+  width: 10px;
+  height: 10px;
+  flex-shrink: 0;
+  background: var(--red);
+}
+
+.certificate-verify__title::after {
+  content: "";
+  flex: 1;
+  border-top: 1.5px dotted var(--line-soft);
+}
+
+/* Code groups stack tightly under the title row — no form-like padding */
+.certificate-verify__body {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.65rem;
+}
+
+.certificate-verify__body > * {
+  margin-top: 0;
+  width: auto;
+}
+
+.certificate-verify__label {
+  display: block;
+  margin-bottom: 0.3rem;
+  font-family: var(--font-mono);
+  font-size: 0.64rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.certificate-verify__group .certificate-verify__code {
+  margin-top: 0;
+}
+
+/* TESDA certificate-number portions — two compact copyable values */
+.certificate-verify__fields {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 0.75rem 1.2rem;
+  width: 100%;
+}
+
+/* Featured credentials — two prominent cards above the contact sheet */
+.featured-credentials__grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 2.6rem 1.5rem;
+}
+
+.featured-credentials .certificate-preview img {
+  height: 320px;
+  aspect-ratio: auto;
+  object-fit: contain;
+  background: var(--card);
+}
+
 /* Modal */
 body.modal-open {
   overflow: hidden;
@@ -1828,12 +1994,14 @@ body.modal-open {
   position: fixed;
   inset: 0;
   z-index: 1000;
-  display: grid;
-  place-items: center;
-  padding: 1.2rem;
+  display: flex;
+  overflow-y: auto;
+  /* Room above the content so the absolute close button stays reachable
+     when the dialog is taller than the viewport. */
+  padding: 3.6rem 1.2rem 1.2rem;
   background: rgba(23, 20, 15, 0.94);
   opacity: 0;
-  transition: opacity 0.2s var(--ease);
+  transition: opacity 0.25s var(--ease);
 }
 
 .certificate-modal.is-open {
@@ -1847,6 +2015,20 @@ body.modal-open {
   justify-content: center;
   gap: 1.1rem;
   width: min(1080px, 100%);
+  /* auto margins centre the dialog but collapse to 0 when it is taller
+     than the viewport, so the top never becomes unreachable. */
+  margin: auto;
+  /* Panel eases in with a slight scale-up; reversing is-open plays it back. */
+  opacity: 0;
+  transform: scale(0.96);
+  transition:
+    opacity 0.25s var(--ease),
+    transform 0.25s var(--ease);
+}
+
+.certificate-modal.is-open .certificate-modal__content {
+  opacity: 1;
+  transform: none;
 }
 
 .certificate-modal__figure {
@@ -1865,15 +2047,56 @@ body.modal-open {
   max-height: 68vh;
   object-fit: contain;
   background: var(--paper-2);
+  /* Image fades in just after the panel starts opening. */
+  opacity: 0;
+  transition: opacity 0.3s var(--ease) 0.12s;
+}
+
+.certificate-modal.is-open .certificate-modal__figure img {
+  opacity: 1;
 }
 
 .certificate-modal__figure figcaption {
   display: flex;
   flex-wrap: wrap;
-  align-items: baseline;
+  align-items: center;
   justify-content: space-between;
   gap: 0.5rem 1rem;
   padding-top: 0.9rem;
+}
+
+/* Date · position indicator · VERIFY button beside the certificate title */
+.certificate-modal__meta {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
+  gap: 0.5rem 0.85rem;
+  margin-left: auto; /* stays right-aligned even when it wraps below the title */
+}
+
+.certificate-modal__position {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  color: var(--muted);
+}
+
+.certificate-verify-btn {
+  min-height: 42px;
+  padding: 0.6em 1.05em;
+  font-size: 0.7rem;
+  letter-spacing: 0.16em;
+}
+
+.certificate-verify-btn::after {
+  content: "\2197";
+  line-height: 1;
+}
+
+.certificate-verify-btn[hidden] {
+  display: none;
 }
 
 .certificate-modal__figure h2 {
@@ -2274,6 +2497,14 @@ body.resume-page {
   .section {
     padding-block: 18pt;
   }
+
+  /* Hero reverts to natural flow when printed (no viewport to fill). */
+  .hero,
+  .hero-inner {
+    display: block;
+    min-height: 0;
+    padding-top: 0;
+  }
 }
 
 /* 14. RESPONSIVE + REDUCED MOTION
@@ -2359,19 +2590,31 @@ body.resume-page {
 
   .hero-title {
     margin-top: 2rem;
+    text-align: center;
+  }
+
+  .hero-actions {
+    justify-content: center;
+  }
+
+  .hero-contact {
+    align-items: center;
   }
 
   .hero-spec {
     margin-top: 1.35rem;
+    text-align: center;
   }
 
-  .hero-role {
-    max-width: none;
+  .hero-spec .spec-row {
+    justify-content: center;
+    gap: 0.6rem;
   }
 
+  /* Cover order on small screens: label, name, buttons, links, portrait.
+     (DOM order already reads this way once the portrait stops jumping ahead.) */
   .hero-media {
-    order: -1;
-    margin-top: 0.5rem;
+    margin-top: 1.9rem;
   }
 
   .project {
@@ -2398,10 +2641,21 @@ body.resume-page {
     gap: 2rem 1.2rem;
   }
 
+  .featured-credentials__grid {
+    grid-template-columns: minmax(0, 1fr);
+    gap: 2rem;
+  }
+
+  .featured-credentials .certificate-preview img {
+    height: 260px;
+  }
+
   .edu-dates {
     margin-top: 0.5rem;
   }
 
+  /* Preview takes the full row; Previous / Next drop beneath it as an even,
+     side-by-side pair with comfortable touch targets. */
   .certificate-modal__content {
     flex-wrap: wrap;
     justify-content: center;
@@ -2409,7 +2663,14 @@ body.resume-page {
 
   .certificate-modal__figure {
     order: -1;
+    flex: 1 1 100%;
     max-width: 100%;
+  }
+
+  .certificate-modal__nav {
+    flex: 1 1 0;
+    justify-content: center;
+    min-height: 46px;
   }
 
   .certificate-modal__close {
@@ -2418,8 +2679,13 @@ body.resume-page {
 }
 
 @media (max-width: 560px) {
-  body {
-    font-size: 16.5px;
+  .certificate-modal__figure {
+    padding: 0.8rem;
+  }
+  /* Keep the dotted burst clear of the centered name — it now sits at the
+     top of the stacked mobile cover. */
+  .deco-burst {
+    opacity: 0.38;
   }
 
   .deco-block {
@@ -2449,10 +2715,6 @@ body.resume-page {
 }
 
 @media (max-width: 430px) {
-  .nav-brand-role {
-    display: none;
-  }
-
   .portrait-wrap {
     width: min(236px, 78%);
   }
@@ -2463,7 +2725,7 @@ body.resume-page {
   }
 
   .spec-row dd {
-    text-align: left;
+    text-align: center;
   }
 }
 

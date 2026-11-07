@@ -292,6 +292,10 @@
     var closeButton = modal.querySelector(".certificate-modal__close");
     var previousButton = modal.querySelector(".certificate-modal__nav--previous");
     var nextButton = modal.querySelector(".certificate-modal__nav--next");
+    var verifySection = document.getElementById("certificate-modal-verify");
+    var verifyBody = document.getElementById("certificate-modal-verify-body");
+    var verifyButton = document.getElementById("certificate-modal-verify-btn");
+    var modalPosition = document.getElementById("certificate-modal-position");
     var currentIndex = 0;
     var trigger = null;
     var closeTimer = null;
@@ -302,11 +306,79 @@
       var title = card.querySelector("h3");
       var date = card.querySelector("time");
       return {
+        card: card,
         image: image,
         title: title.textContent,
         date: date.textContent,
         dateTime: date.getAttribute("datetime")
       };
+    }
+
+    /* Body markup for the compact "Credential Verification" block, built from
+       the card's data-verify* attributes. The VERIFY button itself lives in
+       the title row; empty string means no section at all. */
+    function verifyMarkup(card) {
+      var type = card.getAttribute("data-verify");
+      if (!type) return "";
+      var code = card.getAttribute("data-verify-code") || "";
+
+      function esc(value) {
+        return String(value)
+          .replace(/&/g, "&amp;")
+          .replace(/</g, "&lt;")
+          .replace(/"/g, "&quot;");
+      }
+
+      function codeGroup(label, value) {
+        return (
+          '<div class="certificate-verify__group">' +
+          '<span class="certificate-verify__label">' + esc(label) + "</span>" +
+          '<div class="certificate-verify__code"><code>' + esc(value) +
+          '</code><button class="certificate-copy" type="button" data-copy="' + esc(value) +
+          '" aria-label="Copy ' + esc(label) + '">Copy</button></div></div>'
+        );
+      }
+
+      if (type === "link") {
+        // Cisco: the VERIFY button alone — no extra section.
+        return "";
+      }
+
+      if (type === "certiport") {
+        return (
+          codeGroup("Verification code", code) +
+          '<p class="certificate-verify__note">Copy the code, then enter it at Certiport\u2019s verification portal.</p>'
+        );
+      }
+
+      if (type === "spup") {
+        return (
+          codeGroup("Certificate ID", code) +
+          '<p class="certificate-verify__note">Issuer: SPUP Open University \u00b7 OpenLearning</p>'
+        );
+      }
+
+      if (type === "tesda") {
+        var lastName = card.getAttribute("data-verify-name-last") || "";
+        var firstName = card.getAttribute("data-verify-name-first") || "";
+        var firstFour = card.getAttribute("data-verify-num-first4") || "";
+        var lastFour = card.getAttribute("data-verify-num-last4") || "";
+        return (
+          '<p class="certificate-verify__note">Search using the holder\u2019s name (' +
+          esc(lastName) + ", " + esc(firstName) +
+          ') and the certificate-number portions below.</p>' +
+          '<div class="certificate-verify__fields">' +
+          codeGroup("First four", firstFour) +
+          codeGroup("Last four", lastFour) +
+          "</div>"
+        );
+      }
+
+      return "";
+    }
+
+    function padNumber(value) {
+      return value < 10 ? "0" + value : String(value);
     }
 
     function showCertificate(index) {
@@ -317,6 +389,29 @@
       modalTitle.textContent = details.title;
       modalDate.textContent = details.date;
       modalDate.setAttribute("datetime", details.dateTime);
+      modalPosition.textContent = padNumber(currentIndex + 1) + " / " + padNumber(previews.length);
+
+      var verifyUrl = details.card.getAttribute("data-verify-url") || "";
+      if (verifyUrl) {
+        verifyButton.setAttribute("href", verifyUrl);
+        verifyButton.setAttribute("target", "_blank");
+        verifyButton.setAttribute("rel", "noopener noreferrer");
+        verifyButton.hidden = false;
+      } else {
+        verifyButton.removeAttribute("href");
+        verifyButton.removeAttribute("target");
+        verifyButton.removeAttribute("rel");
+        verifyButton.hidden = true;
+      }
+
+      var markup = verifyMarkup(details.card);
+      if (markup) {
+        verifyBody.innerHTML = markup;
+        verifySection.hidden = false;
+      } else {
+        verifyBody.innerHTML = "";
+        verifySection.hidden = true;
+      }
     }
 
     function closeModal() {
@@ -327,7 +422,7 @@
         modal.hidden = true;
         modalImage.removeAttribute("src");
         if (trigger) trigger.focus();
-      }, prefersReducedMotion.matches ? 0 : 200);
+      }, prefersReducedMotion.matches ? 0 : 250);
     }
 
     function openModal(index, opener) {
@@ -377,7 +472,7 @@
         event.preventDefault();
         showCertificate(currentIndex + 1);
       } else if (event.key === "Tab") {
-        var focusable = Array.prototype.slice.call(modal.querySelectorAll("button:not([disabled])"));
+        var focusable = Array.prototype.slice.call(modal.querySelectorAll("button:not([disabled]), a[href]"));
         var first = focusable[0];
         var last = focusable[focusable.length - 1];
         if (event.shiftKey && document.activeElement === first) {
@@ -391,7 +486,61 @@
     });
   }
 
-  /* 6b. SCROLL SPY — mark the section currently being read
+  /* 6b. CREDENTIAL COPY BUTTONS (delegated — modal buttons are re-rendered
+     on every certificate change) */
+  function initCredentialCopy() {
+    if (!document.querySelector(".certificate-copy") && !document.getElementById("certificate-modal-verify-body")) return;
+
+    function fallbackCopy(text) {
+      return new Promise(function (resolve, reject) {
+        var field = document.createElement("textarea");
+        field.value = text;
+        field.setAttribute("readonly", "");
+        field.style.position = "fixed";
+        field.style.opacity = "0";
+        document.body.appendChild(field);
+        field.select();
+        var ok = false;
+        try {
+          ok = document.execCommand("copy");
+        } catch (error) {
+          ok = false;
+        }
+        document.body.removeChild(field);
+        ok ? resolve() : reject(new Error("copy failed"));
+      });
+    }
+
+    function copyText(text) {
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        return navigator.clipboard.writeText(text).catch(function () {
+          return fallbackCopy(text);
+        });
+      }
+      return fallbackCopy(text);
+    }
+
+    document.addEventListener("click", function (event) {
+      var button = event.target.closest ? event.target.closest(".certificate-copy") : null;
+      if (!button) return;
+      var value = button.getAttribute("data-copy");
+      if (!value) return;
+      if (!button.getAttribute("data-copy-label")) {
+        button.setAttribute("data-copy-label", button.textContent);
+      }
+      var label = button.getAttribute("data-copy-label");
+      copyText(value).then(function () {
+        button.textContent = "Copied";
+        button.classList.add("is-copied");
+        window.setTimeout(function () {
+          button.textContent = label;
+          button.classList.remove("is-copied");
+        }, 1600);
+      });
+    });
+  }
+
+  /* 6c. SCROLL SPY — mark the section currently being read
      ---------------------------------------------------------------------- */
   function initScrollSpy() {
     var links = Array.prototype.slice.call(document.querySelectorAll(".nav-link"));
@@ -496,6 +645,7 @@
     initBackToTop();
     initContactForm();
     initCertificateGallery();
+    initCredentialCopy();
     initScrollSpy();
     initRevealAnimations();
     initPrintButtons();
