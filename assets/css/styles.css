@@ -1872,35 +1872,6 @@ a.contact-link:hover {
   box-shadow: 2px 2px 0 rgba(23, 20, 15, 0.16);
 }
 
-.certificate-copy {
-  padding: 0.3em 0.65em;
-  font-family: var(--font-mono);
-  font-size: 0.62rem;
-  font-weight: 700;
-  letter-spacing: 0.14em;
-  text-transform: uppercase;
-  color: var(--paper);
-  background: var(--ink);
-  border: 1.5px solid var(--ink);
-  box-shadow: 2px 2px 0 var(--red);
-  cursor: pointer;
-  transition:
-    transform var(--t-base) var(--ease),
-    box-shadow var(--t-base) var(--ease),
-    background-color var(--t-base) var(--ease);
-}
-
-.certificate-copy:hover {
-  transform: translate(-1px, -1px);
-  box-shadow: 3px 3px 0 var(--red);
-}
-
-.certificate-copy.is-copied {
-  background: var(--blue);
-  border-color: var(--blue);
-  box-shadow: 2px 2px 0 var(--ink);
-}
-
 /* Verification block rendered inside the certificate modal */
 .certificate-modal__verify {
   flex-basis: 100%; /* figcaption is a flex row — force the block onto its own line */
@@ -1963,12 +1934,43 @@ a.contact-link:hover {
   margin-top: 0;
 }
 
-/* TESDA certificate-number portions — two compact copyable values */
+/* TESDA certificate-number portions — two equal blocks, side by side and
+   kept close together instead of stretched across the modal width */
 .certificate-verify__fields {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 0.75rem 1.2rem;
-  width: 100%;
+  display: flex;
+  gap: 0.7rem;
+  width: auto;
+  max-width: 300px;
+}
+
+.certificate-verify__fields .certificate-verify__group {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+.certificate-verify__fields .certificate-verify__code {
+  display: block;
+}
+
+.certificate-verify__fields .certificate-verify__code code {
+  display: block;
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* Labels stay on one line, directly above their own value block */
+.certificate-verify__fields .certificate-verify__label {
+  white-space: nowrap;
+  letter-spacing: 0.08em;
+}
+
+/* Holder name — plain readable text, not a field or a control */
+.certificate-verify__holder {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: var(--ink);
 }
 
 /* Featured credentials — two prominent cards above the contact sheet */
@@ -2059,20 +2061,38 @@ body.modal-open {
 .certificate-modal__figure figcaption {
   display: flex;
   flex-wrap: wrap;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  gap: 0.5rem 1rem;
+  gap: 0.75rem 0.75rem;
   padding-top: 0.9rem;
 }
 
-/* Date · position indicator · VERIFY button beside the certificate title */
-.certificate-modal__meta {
+/* Title column — capped so long titles wrap onto several lines and never
+   run underneath the right-hand VERIFY column. No truncation, no ellipsis. */
+.certificate-modal__heading {
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+  flex: 1 1 60%;
+  min-width: 0;
+  max-width: 66%;
+}
+
+.certificate-modal__heading h2 {
+  margin-bottom: 0;
+  overflow-wrap: break-word;
+  hyphens: auto;
+}
+
+/* Right-hand column: position indicator + VERIFY button, always its own
+   column so the two can never overlap the title. */
+.certificate-modal__actions {
   display: flex;
   align-items: center;
   justify-content: flex-end;
   flex-wrap: wrap;
-  gap: 0.5rem 0.85rem;
-  margin-left: auto; /* stays right-aligned even when it wraps below the title */
+  gap: 0.5rem;
+  margin-left: auto; /* stays right-aligned when it wraps onto its own line */
 }
 
 .certificate-modal__position {
@@ -2083,11 +2103,15 @@ body.modal-open {
   color: var(--muted);
 }
 
+/* VERIFY — dark plate, white uppercase label, hard 4px orange/red offset
+   shadow, and a press-down hover/active state inherited from .btn--primary */
 .certificate-verify-btn {
-  min-height: 42px;
+  flex-shrink: 0;
+  min-height: 44px;
   padding: 0.6em 1.05em;
   font-size: 0.7rem;
   letter-spacing: 0.16em;
+  white-space: nowrap;
 }
 
 .certificate-verify-btn::after {
@@ -2106,7 +2130,10 @@ body.modal-open {
   text-transform: uppercase;
 }
 
-.certificate-modal__figure p {
+/* Date under the title — scoped to the heading column so verification copy
+   further down keeps its own readable styling. */
+.certificate-modal__heading p {
+  margin: 0;
   font-family: var(--font-mono);
   font-size: 0.75rem;
   letter-spacing: 0.12em;
@@ -2681,6 +2708,19 @@ body.resume-page {
 @media (max-width: 560px) {
   .certificate-modal__figure {
     padding: 0.8rem;
+  }
+
+  /* Narrow screens: the title owns the whole row so it can wrap freely,
+     and the position indicator + VERIFY sit together on the line below. */
+  .certificate-modal__heading {
+    flex: 1 1 100%;
+    max-width: 100%;
+  }
+
+  .certificate-modal__actions {
+    width: 100%;
+    justify-content: space-between;
+    margin-left: 0;
   }
   /* Keep the dotted burst clear of the centered name — it now sits at the
      top of the stacked mobile cover. */

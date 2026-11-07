@@ -316,7 +316,8 @@
 
     /* Body markup for the compact "Credential Verification" block, built from
        the card's data-verify* attributes. The VERIFY button itself lives in
-       the title row; empty string means no section at all. */
+       the title row; empty string means no section at all. Codes are plain
+       readable text — there are no copy controls or inputs. */
     function verifyMarkup(card) {
       var type = card.getAttribute("data-verify");
       if (!type) return "";
@@ -329,13 +330,11 @@
           .replace(/"/g, "&quot;");
       }
 
-      function codeGroup(label, value) {
+      function valueBlock(label, value) {
         return (
           '<div class="certificate-verify__group">' +
           '<span class="certificate-verify__label">' + esc(label) + "</span>" +
-          '<div class="certificate-verify__code"><code>' + esc(value) +
-          '</code><button class="certificate-copy" type="button" data-copy="' + esc(value) +
-          '" aria-label="Copy ' + esc(label) + '">Copy</button></div></div>'
+          '<div class="certificate-verify__code"><code>' + esc(value) + "</code></div></div>"
         );
       }
 
@@ -346,14 +345,14 @@
 
       if (type === "certiport") {
         return (
-          codeGroup("Verification code", code) +
-          '<p class="certificate-verify__note">Copy the code, then enter it at Certiport\u2019s verification portal.</p>'
+          valueBlock("Verification code", code) +
+          '<p class="certificate-verify__note">Enter this code at Certiport\u2019s verification portal.</p>'
         );
       }
 
       if (type === "spup") {
         return (
-          codeGroup("Certificate ID", code) +
+          valueBlock("Certificate ID", code) +
           '<p class="certificate-verify__note">Issuer: SPUP Open University \u00b7 OpenLearning</p>'
         );
       }
@@ -364,12 +363,12 @@
         var firstFour = card.getAttribute("data-verify-num-first4") || "";
         var lastFour = card.getAttribute("data-verify-num-last4") || "";
         return (
-          '<p class="certificate-verify__note">Search using the holder\u2019s name (' +
-          esc(lastName) + ", " + esc(firstName) +
-          ') and the certificate-number portions below.</p>' +
+          '<p class="certificate-verify__note">Enter these details in the official ' +
+          "TESDA Registry of Certified Workers.</p>" +
+          '<p class="certificate-verify__holder">' + esc(lastName + ", " + firstName) + "</p>" +
           '<div class="certificate-verify__fields">' +
-          codeGroup("First four", firstFour) +
-          codeGroup("Last four", lastFour) +
+          valueBlock("First four", firstFour) +
+          valueBlock("Last four", lastFour) +
           "</div>"
         );
       }
@@ -486,61 +485,7 @@
     });
   }
 
-  /* 6b. CREDENTIAL COPY BUTTONS (delegated — modal buttons are re-rendered
-     on every certificate change) */
-  function initCredentialCopy() {
-    if (!document.querySelector(".certificate-copy") && !document.getElementById("certificate-modal-verify-body")) return;
-
-    function fallbackCopy(text) {
-      return new Promise(function (resolve, reject) {
-        var field = document.createElement("textarea");
-        field.value = text;
-        field.setAttribute("readonly", "");
-        field.style.position = "fixed";
-        field.style.opacity = "0";
-        document.body.appendChild(field);
-        field.select();
-        var ok = false;
-        try {
-          ok = document.execCommand("copy");
-        } catch (error) {
-          ok = false;
-        }
-        document.body.removeChild(field);
-        ok ? resolve() : reject(new Error("copy failed"));
-      });
-    }
-
-    function copyText(text) {
-      if (navigator.clipboard && navigator.clipboard.writeText) {
-        return navigator.clipboard.writeText(text).catch(function () {
-          return fallbackCopy(text);
-        });
-      }
-      return fallbackCopy(text);
-    }
-
-    document.addEventListener("click", function (event) {
-      var button = event.target.closest ? event.target.closest(".certificate-copy") : null;
-      if (!button) return;
-      var value = button.getAttribute("data-copy");
-      if (!value) return;
-      if (!button.getAttribute("data-copy-label")) {
-        button.setAttribute("data-copy-label", button.textContent);
-      }
-      var label = button.getAttribute("data-copy-label");
-      copyText(value).then(function () {
-        button.textContent = "Copied";
-        button.classList.add("is-copied");
-        window.setTimeout(function () {
-          button.textContent = label;
-          button.classList.remove("is-copied");
-        }, 1600);
-      });
-    });
-  }
-
-  /* 6c. SCROLL SPY — mark the section currently being read
+  /* 6b. SCROLL SPY — mark the section currently being read
      ---------------------------------------------------------------------- */
   function initScrollSpy() {
     var links = Array.prototype.slice.call(document.querySelectorAll(".nav-link"));
@@ -645,7 +590,6 @@
     initBackToTop();
     initContactForm();
     initCertificateGallery();
-    initCredentialCopy();
     initScrollSpy();
     initRevealAnimations();
     initPrintButtons();
