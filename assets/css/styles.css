@@ -693,6 +693,41 @@ h4 {
   color: var(--body);
 }
 
+/* Cover entrance: a gentle fade + rise on page load, one beat per block
+   (heading → role → intro → buttons → contact → portrait → spec table).
+   Opacity/translate only — never layout-affecting — and gated behind .js so
+   the cover renders fully visible without JavaScript. Keyframes carry the
+   hidden state (fill: both), so no element is ever stuck invisible if the
+   animation itself is unavailable. */
+@keyframes hero-rise {
+  from {
+    opacity: 0;
+    translate: 0 18px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+.js .hero-title,
+.js .hero-role,
+.js .hero-intro,
+.js .hero-actions,
+.js .hero-contact,
+.js .hero-media,
+.js .hero-spec {
+  animation: hero-rise 0.65s var(--ease) both;
+}
+
+.js .hero-title { animation-delay: 0.05s; }
+.js .hero-role { animation-delay: 0.16s; }
+.js .hero-intro { animation-delay: 0.22s; }
+.js .hero-media { animation-delay: 0.26s; }
+.js .hero-actions { animation-delay: 0.3s; }
+.js .hero-contact { animation-delay: 0.36s; }
+.js .hero-spec { animation-delay: 0.44s; }
+
 /* Desktop only: tuck the content block up beneath the H1 — the portrait
    stretches grid row 1, which otherwise leaves a large void under the name. */
 @media (min-width: 901px) {
@@ -2579,6 +2614,31 @@ body.modal-open {
 .js .strength-card.reveal.is-visible:nth-child(4) { --stagger: 0.15s; }
 .js .strength-card.reveal.is-visible:nth-child(5) { --stagger: 0.2s; }
 
+/* Interest tiles use the same gentle cascade; the tile's own background-color
+   hover transition is re-listed so it survives the .reveal override. */
+.js .leader-list li.reveal.is-visible {
+  --stagger: 0s;
+  transition:
+    opacity 0.55s var(--ease) var(--stagger),
+    translate 0.55s var(--ease),
+    background-color var(--t-base) var(--ease);
+}
+
+.js .leader-list li.reveal.is-visible:nth-child(2) { --stagger: 0.06s; }
+.js .leader-list li.reveal.is-visible:nth-child(3) { --stagger: 0.12s; }
+.js .leader-list li.reveal.is-visible:nth-child(4) { --stagger: 0.18s; }
+
+/* The project card reveals like everything else, but its hover lift rides on
+   `transform`/`box-shadow` — re-add them here so the lift eases instead of
+   snapping (same treatment the skill/strength cards already get above). */
+.js .project.reveal.is-visible {
+  transition:
+    opacity 0.55s var(--ease),
+    translate 0.55s var(--ease),
+    transform var(--t-base) var(--ease),
+    box-shadow var(--t-base) var(--ease);
+}
+
 /* 13. RESUME + PRINT
    -------------------------------------------------------------------------- */
 body.resume-page {
@@ -2826,6 +2886,25 @@ body.resume-page {
     display: block;
     min-height: 0;
     padding-top: 0;
+  }
+
+  /* Never print an entrance or reveal mid-flight: paper gets everything
+     at its natural, fully visible state. */
+  .js .reveal {
+    opacity: 1 !important;
+    translate: none !important;
+  }
+
+  .js .hero-title,
+  .js .hero-role,
+  .js .hero-intro,
+  .js .hero-actions,
+  .js .hero-contact,
+  .js .hero-media,
+  .js .hero-spec {
+    animation: none !important;
+    opacity: 1 !important;
+    translate: none !important;
   }
 }
 
@@ -3160,8 +3239,10 @@ body.resume-page {
   *::before,
   *::after {
     animation-duration: 0.01ms !important;
+    animation-delay: 0s !important;
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
+    transition-delay: 0s !important;
   }
 
   .ticker-track {
