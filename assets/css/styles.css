@@ -33,6 +33,11 @@
   --yellow: #ffe23d;
   --salmon: #ff9a80; /* light red for text on ink */
 
+  /* Skills accent (emerald) */
+  --emerald: #0f9d6e;
+  --emerald-deep: #0b7a56;
+  --emerald-tint: #e8f5ef;
+
   /* On ink */
   --on-ink: #f3efe4;
   --on-ink-muted: #c9c2b0;
@@ -43,9 +48,11 @@
   --font-sans: Helvetica, Arial, sans-serif;
   --font-serif: Georgia, "Times New Roman", serif;
   --font-mono: "Courier New", Courier, monospace;
+  --font-ui: ui-rounded, "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, "Helvetica Neue", Arial, sans-serif;
 
   /* Shape & motion */
   --radius: 3px;
+  --radius-soft: 14px; /* rounded cards (skills section) */
   --shadow-card: 6px 6px 0 rgba(23, 20, 15, 0.14);
   --shadow-card-lg: 9px 9px 0 rgba(23, 20, 15, 0.16);
   --t-base: 0.25s;
@@ -1030,10 +1037,15 @@ a.icon-link:hover {
 }
 
 .leader-list li {
-  flex: 1 1 190px;
+  flex: 1 1 230px;
   display: flex;
-  align-items: center;
-  gap: 0.8rem;
+  flex-wrap: wrap;
+  /* Pin the arrow and the title to the top of their line so the marker
+     always sits with the title's first line, and pack the wrapped lines
+     tightly so every tile spaces its rows the same way. */
+  align-items: flex-start;
+  align-content: flex-start;
+  gap: 0.5rem 0.8rem;
   padding: 1rem 1.1rem;
   font-family: var(--font-mono);
   font-size: 0.86rem;
@@ -1043,6 +1055,41 @@ a.icon-link:hover {
   border-right: 2px solid var(--ink);
   border-bottom: 2px solid var(--ink);
   transition: background-color var(--t-base) var(--ease);
+}
+
+/* A zero flex-basis (with min-width released) keeps the title's hypothetical
+   width at 0, so it can never be pushed onto a flex line of its own — the
+   arrow always shares the first line while the title wraps normally. */
+.leader-key {
+  flex: 1 1 0;
+  min-width: 0;
+}
+
+/* Optional one-line description beneath an interest key — wraps to its own
+   full-width row inside the tile, keeping the arrow + key on the first line. */
+.leader-desc {
+  flex: 1 1 100%;
+  font-family: var(--font-sans);
+  font-size: 0.82rem;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: normal;
+  color: var(--muted);
+}
+
+/* Keep the interest tiles on balanced rows: one per row on phones, two per
+   row on tablets, all four across on desktop (percent bases guarantee the
+   row count, so no lone stretched tile in the final row). */
+@media (min-width: 600px) {
+  .leader-list li {
+    flex: 1 1 50%;
+  }
+}
+
+@media (min-width: 1000px) {
+  .leader-list li {
+    flex: 1 1 25%;
+  }
 }
 
 .leader-list li::before {
@@ -1055,101 +1102,163 @@ a.icon-link:hover {
   background: var(--yellow);
 }
 
+/* Skills — same card language as the rest of the portfolio: paper card, 2px
+   ink border, hard offset shadow, mono labels. Official tech icons stay
+   uniform at 22px beside each technology name. */
 .skill-groups {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(420px, 1fr));
-  gap: 1.5rem;
-  counter-reset: skill-group;
+  grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr));
+  gap: 1.4rem;
 }
 
 .skill-group {
-  position: relative;
-  counter-increment: skill-group;
-  padding: 1.6rem 1.4rem 1.5rem;
+  padding: 1.5rem 1.4rem 1.4rem;
   background: var(--card);
   border: 2px solid var(--ink);
   border-radius: var(--radius);
   box-shadow: var(--shadow-card);
+  transition:
+    transform var(--t-base) var(--ease),
+    box-shadow var(--t-base) var(--ease);
 }
 
-.skill-group::before {
-  content: "0" counter(skill-group);
-  position: absolute;
-  top: -0.85rem;
-  right: 1rem;
-  padding: 0.3rem 0.55rem;
-  font-family: var(--font-mono);
-  font-size: 0.7rem;
-  font-weight: 700;
-  letter-spacing: 0.12em;
-  color: var(--paper);
-  background: var(--ink);
-  box-shadow: 2px 2px 0 var(--red);
+.skill-group:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 rgba(23, 20, 15, 0.16);
 }
 
+/* Group title follows the project sub-label pattern: mono caps, red square,
+   dotted rule running out to the card edge. */
 .skill-group h4 {
-  padding-bottom: 0.8rem;
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  padding-bottom: 0.85rem;
   margin-bottom: 1.1rem;
   font-family: var(--font-mono);
-  font-size: 0.74rem;
+  font-size: 0.72rem;
   font-weight: 700;
   letter-spacing: 0.18em;
   text-transform: uppercase;
-  border-bottom: 2px solid var(--ink);
+  color: var(--ink);
+  border-bottom: 1.5px solid var(--line-soft);
 }
 
-.chip-list {
+.skill-group h4::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  background: var(--red);
+}
+
+.tech-chips {
   display: flex;
   flex-wrap: wrap;
   gap: 0.55rem;
 }
 
-.strength-strip {
-  counter-reset: strength;
-  display: flex;
-  flex-wrap: wrap;
-  background: var(--card);
-  border-top: 2px solid var(--ink);
-  border-left: 2px solid var(--ink);
-}
-
-.strength-strip li {
-  flex: 1 1 150px;
-  counter-increment: strength;
-  padding: 1.5rem 1rem 1.3rem;
-  text-align: center;
-  font-family: var(--font-display);
-  font-size: clamp(0.95rem, 1.5vw, 1.12rem);
-  line-height: 1.2;
-  letter-spacing: -0.01em;
+/* Technology chips borrow the .tag outline (ink hairline, mono caps, square
+   corners) so they belong to the same system as the project tags. */
+.tech-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.55rem;
+  padding: 0.42em 0.7em;
+  font-family: var(--font-mono);
+  font-size: 0.74rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--ink);
-  border-right: 2px solid var(--ink);
-  border-bottom: 2px solid var(--ink);
-  transition:
-    background-color var(--t-base) var(--ease),
-    color var(--t-base) var(--ease);
+  background: transparent;
+  border: 1.5px solid var(--ink);
+  border-radius: var(--radius);
+  transition: background-color var(--t-base) var(--ease);
 }
 
-.strength-strip li::before {
-  content: counter(strength, decimal-leading-zero);
+/* No inverted hover here — several official marks are near-black and would
+   disappear against an ink fill. A paper tint keeps them legible. */
+.tech-chip:hover {
+  background: var(--paper-2);
+}
+
+.tech-icon {
   display: block;
-  margin-bottom: 0.55rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  font-weight: 700;
-  letter-spacing: 0.2em;
-  color: var(--blue);
-  transition: color var(--t-base) var(--ease);
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+  object-fit: contain;
 }
 
-.strength-strip li:hover {
-  color: var(--paper);
-  background: var(--ink);
+/* Professional Skills — five compact cards sharing the border and shadow
+   language of the technical groups above. */
+.strength-strip {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1rem;
 }
 
-.strength-strip li:hover::before {
-  color: var(--yellow);
+.strength-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.6rem;
+  padding: 1.15rem 0.9rem;
+  font-family: var(--font-display);
+  font-size: clamp(0.8rem, 1.2vw, 0.95rem);
+  line-height: 1.15;
+  letter-spacing: -0.01em;
+  text-transform: uppercase;
+  text-align: center;
+  color: var(--ink);
+  background: var(--card);
+  border: 2px solid var(--ink);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-card);
+  transition:
+    transform var(--t-base) var(--ease),
+    box-shadow var(--t-base) var(--ease);
+}
+
+.strength-card:hover {
+  transform: translate(-3px, -3px);
+  box-shadow: 9px 9px 0 rgba(23, 20, 15, 0.16);
+}
+
+.strength-icon {
+  display: block;
+  width: 22px;
+  height: 22px;
+  flex-shrink: 0;
+}
+
+.strength-name {
+  display: block;
+}
+
+/* Balanced rows: 3+2 on tablets, all five across on desktop */
+@media (min-width: 640px) {
+  .strength-strip {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+}
+
+@media (min-width: 1024px) {
+  .strength-strip {
+    grid-template-columns: repeat(5, minmax(0, 1fr));
+  }
+}
+
+/* Phones: label sits beside the icon for a compact list-style card */
+@media (max-width: 639px) {
+  .strength-card {
+    flex-direction: row;
+    justify-content: flex-start;
+    text-align: left;
+    gap: 0.75rem;
+    padding: 0.9rem 1.05rem;
+  }
 }
 
 /* 08. EXPERIENCE
@@ -1218,7 +1327,6 @@ a.icon-link:hover {
   border: 1.5px solid var(--ink);
   border-radius: var(--radius);
   transform: rotate(-1.2deg);
-  white-space: nowrap;
 }
 
 .experience-summary {
@@ -1234,6 +1342,66 @@ a.icon-link:hover {
     column-rule: 1.5px dotted var(--line-soft);
     max-width: none;
   }
+}
+
+/* Responsibilities block — mirrors the .project-subhead label treatment so
+   the entry reads like the project cards: mono label + dotted rule, then a
+   compact list with square markers. */
+.experience-tasks {
+  margin-top: 1.5rem;
+  padding-top: 1.3rem;
+  border-top: 1.5px dashed var(--line-soft);
+}
+
+.experience-tasks-title {
+  display: flex;
+  align-items: center;
+  gap: 0.65rem;
+  margin-bottom: 0.9rem;
+  font-family: var(--font-mono);
+  font-size: 0.7rem;
+  font-weight: 700;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.experience-tasks-title::before {
+  content: "";
+  width: 9px;
+  height: 9px;
+  flex-shrink: 0;
+  background: var(--red);
+}
+
+.experience-tasks-title::after {
+  content: "";
+  flex: 1;
+  border-top: 1.5px dotted var(--line-soft);
+}
+
+.experience-tasks-list {
+  display: grid;
+  gap: 0.55rem;
+  max-width: 78ch;
+}
+
+.experience-tasks-list li {
+  position: relative;
+  padding-left: 1.35rem;
+  font-size: 0.97rem;
+  line-height: 1.55;
+  color: var(--body);
+}
+
+.experience-tasks-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  background: var(--blue);
 }
 
 /* 09. PROJECTS — front-page feature stories
@@ -1435,10 +1603,22 @@ a.icon-link:hover {
   border-left: 4px solid var(--blue);
 }
 
-.project-thumb {
+/* PRJ—01 screenshot gallery — a side panel of full-width screenshots stacked
+   in a bounded, vertically scrollable column, so the card never grows with
+   the number of shots. The modifier only widens this card's gallery column;
+   the base .project rule (and its stacked layout below 900px) still governs
+   every card. */
+.project--gallery {
+  grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
+}
+
+.project-gallery {
   grid-area: thumb;
   align-self: start;
-  padding: 0.6rem;
+  display: grid;
+  gap: 0.65rem;
+  min-width: 0;
+  padding: 0.75rem;
   background: var(--paper-2);
   border: 1.5px solid var(--ink);
   border-radius: var(--radius);
@@ -1447,16 +1627,142 @@ a.icon-link:hover {
   transition: transform var(--t-base) var(--ease);
 }
 
-.project:hover .project-thumb {
+.project:hover .project-gallery {
   transform: rotate(0deg);
 }
 
-.project-thumb img {
+.project-gallery__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 0.5rem;
+  padding-bottom: 0.55rem;
+  border-bottom: 1.5px dotted var(--line-soft);
+}
+
+.project-gallery__label {
+  font-family: var(--font-mono);
+  font-size: 0.72rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
+}
+
+.project-gallery__count {
+  flex-shrink: 0;
+  font-family: var(--font-mono);
+  font-size: 0.66rem;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+/* Bounded scroll area — the panel keeps a fixed footprint no matter how many
+   screenshots are stacked inside, and the thin ink scrollbar reads as part of
+   the design rather than a widget bolted on. */
+.project-gallery__panel {
+  display: grid;
+  gap: 0.75rem;
+  max-height: min(56vh, 520px);
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: 0.15rem 0.4rem 0.15rem 0.15rem;
+  scrollbar-width: thin;
+  scrollbar-color: var(--ink) transparent;
+}
+
+.project-gallery__shot {
+  display: grid;
+  gap: 0.35rem;
+  min-width: 0;
+  padding: 0;
+  text-align: left;
+}
+
+.project-gallery__shot img {
+  display: block;
   width: 100%;
   height: auto;
   aspect-ratio: 16 / 9;
   object-fit: cover;
-  border: 1px solid rgba(23, 20, 15, 0.3);
+  background: var(--paper);
+  border: 1.5px solid rgba(23, 20, 15, 0.25);
+  transition:
+    border-color var(--t-base) var(--ease),
+    box-shadow var(--t-base) var(--ease);
+}
+
+.project-gallery__shot:hover img {
+  border-color: var(--ink);
+}
+
+/* Selected shot — red frame + offset shadow, the same signal used on the
+   certificate cards, so the active screenshot reads at a glance. */
+.project-gallery__shot.is-selected img {
+  border-color: var(--red);
+  box-shadow: 3px 3px 0 var(--red);
+}
+
+.project-gallery__shot-label {
+  font-family: var(--font-mono);
+  font-size: 0.6rem;
+  font-weight: 700;
+  line-height: 1.35;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+}
+
+.project-gallery__shot.is-selected .project-gallery__shot-label {
+  color: var(--red);
+}
+
+/* Compact contribution log — same auto-fit pattern as .feature-list so it
+   reflows from two columns to one without extra breakpoints. The track min
+   is capped at 100% so it can never overflow narrow phone widths. */
+.contribution-list {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+  gap: 0.5rem 1.6rem;
+}
+
+.contribution-list li {
+  position: relative;
+  padding-left: 1.35rem;
+  font-size: 0.93rem;
+  line-height: 1.55;
+  color: var(--body);
+}
+
+.contribution-list li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.55em;
+  width: 7px;
+  height: 7px;
+  background: var(--blue);
+}
+
+/* Full-size screenshot lightbox — reuses the certificate modal shell, with
+   a wider panel so 16:9 screenshots fill the available space. */
+.project-lightbox .certificate-modal__content {
+  width: min(1200px, 100%);
+}
+
+.project-lightbox .certificate-modal__figure {
+  max-width: min(1080px, 86vw);
+}
+
+.project-lightbox__label {
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink);
 }
 
 /* 10. EDUCATION — route log
@@ -1637,35 +1943,6 @@ a.icon-link:hover {
 a.contact-link:hover {
   color: var(--yellow);
   border-color: var(--yellow);
-}
-
-.qr-block {
-  margin-top: 2.4rem;
-}
-
-.qr-placeholder {
-  display: grid;
-  place-items: center;
-  width: 148px;
-  aspect-ratio: 1;
-  padding: 0.8rem;
-  text-align: center;
-  font-family: var(--font-mono);
-  font-size: 0.64rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  color: var(--on-ink-muted);
-  border: 1.5px dashed rgba(243, 239, 228, 0.55);
-  border-radius: var(--radius);
-}
-
-.qr-note {
-  margin-top: 0.8rem;
-  font-family: var(--font-mono);
-  font-size: 0.72rem;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
-  color: var(--on-ink-muted);
 }
 
 /* Printed-form fields */
@@ -2041,7 +2318,9 @@ body.modal-open {
   background: var(--card);
   border: 2px solid var(--paper);
   border-radius: var(--radius);
-  box-shadow: 10px 10px 0 var(--red);
+  /* Neutral depth instead of the poster-style offset shadow: the dialog
+     already sits on a dark scrim, so a soft drop shadow reads correctly. */
+  box-shadow: 0 22px 55px rgba(0, 0, 0, 0.45);
 }
 
 .certificate-modal__figure img {
@@ -2159,7 +2438,7 @@ body.modal-open {
 }
 
 .certificate-modal__close:hover {
-  background: var(--red);
+  background: var(--yellow);
 }
 
 .certificate-modal__nav {
@@ -2279,10 +2558,26 @@ body.modal-open {
   translate: 0 0;
 }
 
-.js .skill-group:nth-child(2) { transition-delay: 0.06s; }
-.js .skill-group:nth-child(3) { transition-delay: 0.12s; }
-.js .skill-group:nth-child(4) { transition-delay: 0.18s; }
-.js .skill-group:nth-child(5) { transition-delay: 0.24s; }
+/* Staggered entrance: each card fades in on its own beat (the delay lives
+   in opacity only, so hover never feels sluggish). transform rides along on
+   the fast track so the lift matches the portfolio's other cards. */
+.js .skill-group.reveal.is-visible,
+.js .strength-card.reveal.is-visible {
+  --stagger: 0s;
+  transition:
+    opacity 0.55s var(--ease) var(--stagger),
+    translate 0.55s var(--ease),
+    transform var(--t-base) var(--ease),
+    box-shadow var(--t-base) var(--ease);
+}
+
+.js .skill-group.reveal.is-visible:nth-child(2) { --stagger: 0.06s; }
+.js .skill-group.reveal.is-visible:nth-child(3) { --stagger: 0.12s; }
+
+.js .strength-card.reveal.is-visible:nth-child(2) { --stagger: 0.05s; }
+.js .strength-card.reveal.is-visible:nth-child(3) { --stagger: 0.1s; }
+.js .strength-card.reveal.is-visible:nth-child(4) { --stagger: 0.15s; }
+.js .strength-card.reveal.is-visible:nth-child(5) { --stagger: 0.2s; }
 
 /* 13. RESUME + PRINT
    -------------------------------------------------------------------------- */
@@ -2599,6 +2894,12 @@ body.resume-page {
   .certificate-gallery {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
+
+  /* Between the stacked layout and full desktop, cap the gallery column so
+     the project information keeps the wider half of the card. */
+  .project--gallery {
+    grid-template-columns: minmax(0, 1fr) minmax(280px, 360px);
+  }
 }
 
 @media (max-width: 900px) {
@@ -2617,6 +2918,15 @@ body.resume-page {
 
   .hero-title {
     margin-top: 2rem;
+    /* Slightly larger name on the stacked cover for better prominence. */
+    font-size: clamp(3.1rem, 8vw, 6.3rem);
+    text-align: center;
+  }
+
+  /* Brief introduction joins the rest of the centred cover. */
+  .hero-role,
+  .hero-intro {
+    margin-inline: auto;
     text-align: center;
   }
 
@@ -2652,13 +2962,63 @@ body.resume-page {
       "thumb";
   }
 
-  .project-thumb {
-    max-width: 520px;
+  /* Gallery card: screenshots sit above the title and description. */
+  .project--gallery {
+    grid-template-areas:
+      "rail"
+      "thumb"
+      "main";
+  }
+
+  .project-gallery {
+    max-width: none;
     margin-top: 0.5rem;
+    /* Flat panel on small screens — the poster tilt fights a horizontal
+       scroller and makes swiping feel off-axis. */
+    transform: none;
+  }
+
+  /* Horizontal filmstrip: swipe left to right through the screenshots.
+     Vertical scroll is released so the panel grows with its content. */
+  .project-gallery__panel {
+    display: flex;
+    gap: 0.7rem;
+    max-height: none;
+    padding: 0.15rem 0.35rem 0.55rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    overscroll-behavior-x: contain;
+    scroll-snap-type: x mandatory;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .project-gallery__shot {
+    flex: 0 0 min(78%, 320px);
+    scroll-snap-align: start;
+  }
+
+  /* Natural image ratio — previews are never cropped or stretched. */
+  .project-gallery__shot img {
+    aspect-ratio: auto;
+    object-fit: contain;
   }
 
   .experience-summary {
     columns: 1;
+  }
+
+  /* Reserve a clear band at the bottom of the footer so the fixed
+     back-to-top button floats over empty space instead of landing on top
+     of the copyright and credit lines. */
+  .site-footer {
+    padding-block: 2.6rem 6.25rem;
+  }
+
+  .back-to-top {
+    right: 1rem;
+    bottom: 1rem;
+    width: 50px;
+    height: 50px;
   }
 }
 
@@ -2744,9 +3104,25 @@ body.resume-page {
     width: 100%;
   }
 
+  /* Footer on phones: one centred, evenly spaced block — name, copyright,
+     then the build credit — so nothing wraps awkwardly mid-phrase. */
   .footer-inner {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
+    gap: 0.9rem;
+    text-align: center;
+  }
+
+  .footer-name {
+    white-space: nowrap;
+  }
+
+  .footer-copy,
+  .footer-note {
+    /* Tighter tracking lets each credit line fit on one line at common
+       phone widths; anything longer splits into two balanced lines. */
+    letter-spacing: 0.06em;
+    text-wrap: balance;
   }
 
   .resume-toolbar-inner {

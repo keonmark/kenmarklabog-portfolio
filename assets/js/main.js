@@ -485,6 +485,137 @@
     });
   }
 
+  /* 6a. PROJECT GALLERY — scrollable screenshot panel + full-size lightbox
+     ---------------------------------------------------------------------- */
+  function initProjectGallery() {
+    var gallery = document.querySelector("[data-project-gallery]");
+    var modal = document.getElementById("cashier-lightbox");
+    if (!gallery || !modal) return;
+
+    var shots = Array.prototype.slice.call(gallery.querySelectorAll("[data-gallery-thumb]"));
+    if (!shots.length) return;
+
+    var modalImage = document.getElementById("cashier-lightbox-image");
+    var modalLabel = document.getElementById("cashier-lightbox-label");
+    var modalPosition = document.getElementById("cashier-lightbox-position");
+    var closeButton = modal.querySelector(".certificate-modal__close");
+    var previousButton = modal.querySelector(".certificate-modal__nav--previous");
+    var nextButton = modal.querySelector(".certificate-modal__nav--next");
+
+    var currentIndex = 0;
+    var trigger = null;
+    var closeTimer = null;
+
+    function detailsFor(index) {
+      var shot = shots[index];
+      var image = shot.querySelector("img");
+      var label = shot.querySelector(".project-gallery__shot-label");
+      return {
+        src: image.getAttribute("src"),
+        alt: shot.getAttribute("data-alt") || "",
+        label: label ? label.textContent.trim() : ""
+      };
+    }
+
+    /* Marks the active screenshot in the panel (and returns its details).
+       The modal image is only written while the viewer is open, so nothing
+       extra is fetched on page load. */
+    function selectShot(index) {
+      currentIndex = (index + shots.length) % shots.length;
+      shots.forEach(function (shot, shotIndex) {
+        var selected = shotIndex === currentIndex;
+        shot.classList.toggle("is-selected", selected);
+        shot.setAttribute("aria-pressed", selected ? "true" : "false");
+      });
+      return detailsFor(currentIndex);
+    }
+
+    function showImage(index) {
+      var details = selectShot(index);
+      modalImage.setAttribute("src", details.src);
+      modalImage.setAttribute("alt", details.alt);
+      modalLabel.textContent = details.label;
+      modalPosition.textContent = currentIndex + 1 + " / " + shots.length;
+    }
+
+    function closeModal() {
+      if (modal.hidden) return;
+      modal.classList.remove("is-open");
+      document.body.classList.remove("modal-open");
+      closeTimer = window.setTimeout(function () {
+        modal.hidden = true;
+        modalImage.removeAttribute("src");
+        modalImage.setAttribute("alt", "");
+        if (trigger) trigger.focus();
+      }, prefersReducedMotion.matches ? 0 : 250);
+    }
+
+    function openModal(index, opener) {
+      if (closeTimer) {
+        window.clearTimeout(closeTimer);
+        closeTimer = null;
+      }
+      trigger = opener;
+      modal.hidden = false;
+      showImage(index);
+      document.body.classList.add("modal-open");
+      window.requestAnimationFrame(function () {
+        modal.classList.add("is-open");
+        closeButton.focus();
+      });
+    }
+
+    /* Selecting a screenshot in the panel opens it full size. */
+    shots.forEach(function (shot, index) {
+      shot.addEventListener("click", function () {
+        openModal(index, shot);
+      });
+    });
+
+    closeButton.addEventListener("click", closeModal);
+    previousButton.addEventListener("click", function () {
+      showImage(currentIndex - 1);
+    });
+    nextButton.addEventListener("click", function () {
+      showImage(currentIndex + 1);
+    });
+
+    /* Clicking the dark backdrop (anything outside the figure and buttons)
+       closes the viewer; clicking the screenshot itself does not. */
+    modal.addEventListener("click", function (event) {
+      if (!event.target.closest(".certificate-modal__figure, button")) {
+        closeModal();
+      }
+    });
+
+    document.addEventListener("keydown", function (event) {
+      if (modal.hidden) return;
+      if (event.key === "Escape") {
+        event.preventDefault();
+        closeModal();
+      } else if (event.key === "ArrowLeft") {
+        event.preventDefault();
+        showImage(currentIndex - 1);
+      } else if (event.key === "ArrowRight") {
+        event.preventDefault();
+        showImage(currentIndex + 1);
+      } else if (event.key === "Tab") {
+        var focusable = Array.prototype.slice.call(modal.querySelectorAll("button:not([disabled]), a[href]"));
+        var first = focusable[0];
+        var last = focusable[focusable.length - 1];
+        if (event.shiftKey && document.activeElement === first) {
+          event.preventDefault();
+          last.focus();
+        } else if (!event.shiftKey && document.activeElement === last) {
+          event.preventDefault();
+          first.focus();
+        }
+      }
+    });
+
+    selectShot(0);
+  }
+
   /* 6b. SCROLL SPY — mark the section currently being read
      ---------------------------------------------------------------------- */
   function initScrollSpy() {
@@ -590,6 +721,7 @@
     initBackToTop();
     initContactForm();
     initCertificateGallery();
+    initProjectGallery();
     initScrollSpy();
     initRevealAnimations();
     initPrintButtons();
