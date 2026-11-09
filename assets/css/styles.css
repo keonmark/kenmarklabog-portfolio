@@ -1368,19 +1368,14 @@ a.icon-link:hover {
   transform: rotate(-1.2deg);
 }
 
+/* One continuous paragraph — the old two-column split (with its dotted
+   vertical rule) cut the sentence in half and read as two disconnected
+   blocks. 78ch keeps the measure comfortable on wide screens and the
+   paragraph simply wraps at narrower widths. */
 .experience-summary {
   max-width: 78ch;
   font-size: 1.05rem;
   line-height: 1.7;
-}
-
-@media (min-width: 960px) {
-  .experience-summary {
-    columns: 2;
-    column-gap: 2.6rem;
-    column-rule: 1.5px dotted var(--line-soft);
-    max-width: none;
-  }
 }
 
 /* Responsibilities block — mirrors the .project-subhead label treatment so
@@ -1643,18 +1638,22 @@ a.icon-link:hover {
 }
 
 /* PRJ—01 screenshot gallery — a side panel of full-width screenshots stacked
-   in a bounded, vertically scrollable column, so the card never grows with
-   the number of shots. The modifier only widens this card's gallery column;
-   the base .project rule (and its stacked layout below 900px) still governs
-   every card. */
+   in a column that stretches to the bottom of the card, so the empty pocket
+   that used to sit under the panel is filled by the shots themselves. The
+   modifier only widens this card's gallery column; the base .project rule
+   (and its stacked layout below 900px) still governs every card. */
 .project--gallery {
   grid-template-columns: minmax(0, 1fr) minmax(300px, 420px);
 }
 
 .project-gallery {
   grid-area: thumb;
-  align-self: start;
+  /* Fill the card row instead of stopping at the top: the panel below takes
+     whatever height the description column leaves available. */
+  align-self: stretch;
   display: grid;
+  /* Head keeps its natural height; the shot panel absorbs the rest. */
+  grid-template-rows: auto minmax(0, 1fr);
   gap: 0.65rem;
   min-width: 0;
   padding: 0.75rem;
@@ -1698,13 +1697,17 @@ a.icon-link:hover {
   color: var(--muted);
 }
 
-/* Bounded scroll area — the panel keeps a fixed footprint no matter how many
-   screenshots are stacked inside, and the thin ink scrollbar reads as part of
-   the design rather than a widget bolted on. */
+/* The panel takes the height the stretched card leaves over: any leftover
+   space is shared evenly between the shots (space-between keeps the first
+   shot flush under the header and the last one flush with the panel floor),
+   so the gallery reads as one full-height column instead of stopping halfway
+   down the card. The thin ink scrollbar only ever appears as a safety net —
+   the shots themselves fit the available height. */
 .project-gallery__panel {
   display: grid;
   gap: 0.75rem;
-  max-height: min(56vh, 520px);
+  min-height: 0;
+  align-content: space-between;
   overflow-y: auto;
   overscroll-behavior: contain;
   padding: 0.15rem 0.4rem 0.15rem 0.15rem;
@@ -2931,47 +2934,130 @@ body.resume-page {
 
   .nav-toggle {
     display: flex;
+    /* While the panel is open the control reads as an active close button;
+       the bars themselves still morph into an X through the rules below. */
+    transition: background-color var(--t-base) var(--ease);
   }
 
+  .nav-toggle[aria-expanded="true"] {
+    background: var(--yellow);
+  }
+
+  /* Slide-down panel. It is positioned under the masthead rather than in
+     flow, so opening it never shifts the page, and the closed state keeps
+     the links out of view *and* out of the tab order — visibility: hidden
+     behaves like display: none for keyboard and screen-reader users, but
+     lets the panel ease in and out instead of snapping. */
   .nav-menu {
     position: absolute;
     top: 100%;
     left: 0;
     right: 0;
-    display: none;
+    display: flex;
     flex-direction: column;
     align-items: stretch;
-    gap: 0.4rem;
-    padding: 1rem clamp(1.1rem, 4vw, 2rem) 1.4rem;
+    gap: 0.55rem;
+    padding: 0.85rem clamp(1.1rem, 4vw, 2rem) 1.5rem;
     background: var(--paper);
+    border-top: 2px solid var(--ink);
     border-bottom: 2px solid var(--ink);
-    box-shadow: 0 4px 0 var(--red);
+    /* The masthead's red bar is redrawn inside the panel (it would otherwise
+       be covered by the panel background), so the open menu reads as one
+       continuous extension of the masthead. */
+    box-shadow:
+      inset 0 3px 0 var(--red),
+      0 4px 0 var(--red);
+    opacity: 0;
+    visibility: hidden;
+    translate: 0 -12px;
+    transition:
+      opacity 0.28s var(--ease),
+      translate 0.28s var(--ease),
+      visibility 0s linear 0.28s;
   }
 
+  /* Visibility flips immediately on the way in; on the way out the base rule
+     above holds it for the length of the fade, so the panel never disappears
+     before its close animation has played. */
   .nav-menu.is-open {
-    display: flex;
+    opacity: 1;
+    visibility: visible;
+    translate: 0 0;
+    transition:
+      opacity 0.28s var(--ease),
+      translate 0.28s var(--ease),
+      visibility 0s linear 0s;
   }
 
   .nav-list {
     flex-direction: column;
     align-items: stretch;
     gap: 0;
+    border-top: 1.5px dotted var(--line-soft);
   }
 
+  /* Full-width rows: the dotted rule runs edge to edge instead of stopping
+     behind the last letter, so the seven links read as one aligned menu
+     block rather than seven ragged lines. */
   .nav-link {
+    width: 100%;
+    align-items: center;
     justify-content: flex-start;
-    padding: 0.85rem 0.6rem;
-    font-size: 0.82rem;
+    gap: 0.85rem;
+    padding: 0.85rem 0.35rem;
+    font-size: 0.85rem;
+    letter-spacing: 0.13em;
     border-bottom: 1.5px dotted var(--line-soft);
     border-radius: 0;
   }
 
+  /* Fixed number gutter keeps every label on the same left edge. */
+  .nav-num {
+    flex: 0 0 auto;
+    width: 1.7rem;
+    font-size: 0.62rem;
+  }
+
+  /* Staggered entrance: each row fades and slides down on its own beat. The
+     delay only exists while the panel is open, so closing plays every row
+     back out together with the panel instead of queueing them up. */
+  .nav-menu .nav-link,
+  .nav-menu .nav-cta {
+    --stagger: 0s;
+    opacity: 0;
+    translate: 0 -8px;
+    transition:
+      opacity 0.3s var(--ease) var(--stagger),
+      translate 0.3s var(--ease) var(--stagger),
+      transform var(--t-base) var(--ease),
+      box-shadow var(--t-base) var(--ease),
+      background-color var(--t-base) var(--ease),
+      color var(--t-base) var(--ease);
+  }
+
+  .nav-menu.is-open .nav-link,
+  .nav-menu.is-open .nav-cta {
+    opacity: 1;
+    translate: 0 0;
+  }
+
+  .nav-menu.is-open .nav-list li:nth-child(1) .nav-link { --stagger: 0.05s; }
+  .nav-menu.is-open .nav-list li:nth-child(2) .nav-link { --stagger: 0.09s; }
+  .nav-menu.is-open .nav-list li:nth-child(3) .nav-link { --stagger: 0.13s; }
+  .nav-menu.is-open .nav-list li:nth-child(4) .nav-link { --stagger: 0.17s; }
+  .nav-menu.is-open .nav-list li:nth-child(5) .nav-link { --stagger: 0.21s; }
+  .nav-menu.is-open .nav-list li:nth-child(6) .nav-link { --stagger: 0.25s; }
+  .nav-menu.is-open .nav-list li:nth-child(7) .nav-link { --stagger: 0.29s; }
+  .nav-menu.is-open .nav-cta { --stagger: 0.34s; }
+
+  /* Resume sits as a full-width action beneath the list, aligned to the
+     same edges as the links. */
   .nav-cta {
-    margin-top: 0.6rem;
-    align-self: flex-start;
-    padding: 0.78em 1.4em;
+    align-self: stretch;
+    margin-top: 0.35rem;
+    padding: 0.85em 1.2em;
     font-size: 0.78rem;
-    letter-spacing: 0.14em;
+    letter-spacing: 0.16em;
   }
 
   .certificate-gallery {
@@ -3084,10 +3170,6 @@ body.resume-page {
   .project-gallery__shot img {
     aspect-ratio: auto;
     object-fit: contain;
-  }
-
-  .experience-summary {
-    columns: 1;
   }
 
   /* Reserve a clear band at the bottom of the footer so the fixed
