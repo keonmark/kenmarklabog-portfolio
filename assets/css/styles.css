@@ -717,7 +717,7 @@ h4 {
 .js .hero-contact,
 .js .hero-media,
 .js .hero-spec {
-  animation: hero-rise 0.65s var(--ease) both;
+  animation: hero-rise 0.90s var(--ease) both;
 }
 
 .js .hero-title { animation-delay: 0.05s; }
@@ -779,6 +779,8 @@ a.icon-link:hover {
 .hero-media {
   grid-column: 2;
   grid-row: 1;
+  position: relative;
+  z-index: 2;
   margin-top: 0.55rem;
   display: flex;
   flex-direction: column;
@@ -858,6 +860,8 @@ a.icon-link:hover {
 .hero-spec {
   grid-column: 2;
   grid-row: 2;
+  position: relative;
+  z-index: 1;
   margin-top: 0.6rem;
 }
 
@@ -2998,7 +3002,7 @@ body.resume-page {
   .hero-title {
     margin-top: 2rem;
     /* Slightly larger name on the stacked cover for better prominence. */
-    font-size: clamp(3.1rem, 8vw, 6.3rem);
+    font-size: clamp(3.4rem, 8vw, 6.3rem);
     text-align: center;
   }
 
@@ -3019,11 +3023,11 @@ body.resume-page {
 
   .hero-spec {
     margin-top: 1.35rem;
-    text-align: center;
+    text-align: left;
   }
 
   .hero-spec .spec-row {
-    justify-content: center;
+    justify-content: space-between;
     gap: 0.6rem;
   }
 
