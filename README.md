@@ -1,10 +1,10 @@
 # Ken Mark S. Labog — Personal Portfolio
 
-A personal portfolio website showcasing my background, education, technical skills, certifications, and projects as a Bachelor of Science in Information Technology student specializing in Networking and Security.
+A personal portfolio website showcasing my background, education, technical skills, certifications, professional experience, and projects as an IT graduate and aspiring Full-Stack Developer.
 
-**Domain:** https://kenmarklabog.online
+**Live Website:** [https://kenmarklabog.online](https://kenmarklabog.online)
 
-**Deployment Status:** In progress
+**Deployment Status:** Live
 
 ## Built With
 
@@ -15,23 +15,27 @@ A personal portfolio website showcasing my background, education, technical skil
 
 This website uses a lightweight static architecture without a frontend framework or build process.
 
-## Featured Projects
+## Features
 
-### LAN-Based Campus Cashier Collection and Audit-Ready Reporting System
+- Responsive layout for desktop, tablet, and mobile devices
+- Animated hero section and scroll-reveal effects
+- Responsive mobile navigation with smooth transitions
+- Technical skills and professional experience sections
+- Education and certification showcase
+- Project gallery with interactive screenshots
+- Downloadable PDF resume
+- Contact and social media links
+- Reduced-motion accessibility support
+
+## Featured Project
+
+### LAN-Based Campus Cashier Collection System
 
 A LAN-based cashier collection and reporting system developed for Isabela State University – Cauayan Campus.
 
 - **Role:** Full-System Development
 - **Status:** Deployed on campus LAN
 - **Technologies:** Python, Django, MariaDB, HTML, CSS, JavaScript, Bootstrap, Waitress, and Caddy
-
-### ADLOR — Attendance Data Logger for Organized Records
-
-A QR-based attendance management system designed to support campus event attendance recording and tracking.
-
-- **Role:** Full-System Development
-- **Status:** Previous deployment no longer live
-- **Technologies:** PHP, MySQL, HTML, CSS, and JavaScript
 
 ## Project Structure
 
@@ -47,13 +51,13 @@ portfolio-website/
 └── assets/
     ├── css/
     ├── js/
-    └── images/
-        ├── profile/
-        ├── certificates/
-        │   └── blurred/
-        └── projects/
-            ├── campus-cashier/
-            └── adlor/
+    ├── images/
+    │   ├── profile/
+    │   ├── certificates/
+    │   │   └── blurred/
+    │   └── projects/
+    │       └── campus-cashier/
+    └── KenMarkLabog_Resume.pdf
 ```
 
 ## Local Development
@@ -66,7 +70,7 @@ No installation or build process is required.
 
 Alternatively, run a local development server:
 
-```powershell
+```bash
 python -m http.server 8000
 ```
 
@@ -74,15 +78,13 @@ Then visit `http://localhost:8000`.
 
 ## Deployment
 
-The portfolio is being prepared for deployment using [Vercel](https://vercel.com/).
+The portfolio is hosted on [Vercel](https://vercel.com/) and uses a custom domain registered through Hostinger.
 
-The custom domain is registered through Hostinger:
-
-**https://kenmarklabog.online**
+**Website:** [https://kenmarklabog.online](https://kenmarklabog.online)
 
 ## Contact
 
-Please visit the portfolio website for available contact and social links.
+Please visit the portfolio website for available contact information and social media links.
 
 ---
 
